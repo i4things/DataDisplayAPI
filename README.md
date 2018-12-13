@@ -64,25 +64,18 @@ function iot_json_function(data, key) {
 		  out += "<hr><p>";
           out += "&nbsp;Time: " + new Date(json_data.last[i].t) + "<br>";
           out += "&nbsp;Signal Strength: " + json_data.last[i].r + "%<br>";
-		  out += "&nbsp;Triangulated Lat: " + json_data.last[i].l + "<br>";
-		  out += "&nbsp;Triangulated Lon: " + json_data.last[i].n + "<br>";
+	  out += "&nbsp;Triangulated Lat: " + json_data.last[i].l + "<br>";
+	  out += "&nbsp;Triangulated Lon: " + json_data.last[i].n + "<br>";
           out += "&nbsp;Data: "
 		  
-		  var decrypted_data = xxtea_decrypt(json_data.last[i].d, key);
+		  var decrypted_data = i4things_xxtea_decrypt(json_data.last[i].d, key);
           
 		  for (j = 0; j < decrypted_data.length; j++) {
              out +=  decrypted_data[j] + "";
           }
 		  
           out += "<br>";
-		  
-		  //custom example
-		  out += "<br>";
-		  var degree_celsius = (-20.0 + (decrypted_data[0] * 0.3137)).toFixed(1); out += "&nbsp;Temp: " + degree_celsius +"C<br>";
-          var humidity_percent = decrypted_data[1]; out += "&nbsp;Humidity: " + humidity_percent +"%<br>";
-		  var bat_voltage = (2.0 + (decrypted_data[2] * 0.0118)).toFixed(2); out += "&nbsp;Battery: " + bat_voltage +"V<br>";
-		  
-		  out += "<\p>";
+	  out += "<\p>";
 		  
         }
  document.getElementById("iot_data_dump").innerHTML = out;
