@@ -27,7 +27,26 @@ var iot_json = ' {
     }]}';
     
 ```
+Data for history (from yesterday to up-to-60 days) is returned in the following format:
 
+```
+var iot_json= '{
+    "thing": 4,
+    "hist": 0,
+    "day": [{
+        "t": 1544745580058,
+        "l": 52.56,
+        "n": 12.36,
+        "r": 81,
+        "d": [49, 194, 23, 246, 151, 124, 52, 168]
+    }, {
+        "t": 1544745461094,
+        "l": 52.56,
+        "n": 12.36,
+        "r": 81,
+        "d": [70, 92, 237, 239, 176, 243, 195, 211]
+    }]}';
+```
 Actual source code :
 
 ```
@@ -39,6 +58,7 @@ Actual source code :
 
 <p><div id="iot_data_dump"></div></p>
 
+<p><div id="iot_data_hist_dump"></div></p>
 
 <script src="https://i4things.com/assets/i4t/js/i4things.js"></script>
 
@@ -81,6 +101,36 @@ function iot_json_function(data, key) {
  document.getElementById("iot_data_dump").innerHTML = out;
 }
 
+function iot_json_hist_function(data, key) {
+        var json_data = JSON.parse(data);
+		
+		 /**********************************************************\
+					Place your code here
+         \**********************************************************/
+		
+        var out = "Thing: " + json_data.thing + "<br>";
+		var out = "Day Index From History: " + json_data.hist + "<br>";
+        for (i = 0; i < json_data.day.length; i++) {
+		  out += "<hr><p>";
+          out += "&nbsp;Time: " + new Date(json_data.day[i].t) + "<br>";
+          out += "&nbsp;Signal Strength: " + json_data.day[i].r + "%<br>";
+		  out += "&nbsp;Triangulated Lat: " + json_data.day[i].l + "<br>";
+		  out += "&nbsp;Triangulated Lon: " + json_data.day[i].n + "<br>";
+          out += "&nbsp;Data: "
+		  
+		  var decrypted_data = i4things_xxtea_decrypt(json_data.day[i].d, key);
+          
+		  for (j = 0; j < decrypted_data.length; j++) {
+             out +=  decrypted_data[j] + " ";
+          }
+		  
+          out += "<br>";
+		  out += "<\p>";
+		  
+        }
+ document.getElementById("iot_data_hist_dump").innerHTML = out;
+}
+
 </script>
 
 <script> 
@@ -92,7 +142,8 @@ var thing_id = 1;
 var thing_network_key = "4C11182A1D152D5D0F62144A44523C25";
 var thing_private_key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 var message_to_node = [1,2,3, Math.floor((Math.random() * 255))];
-		 
+var yesterday_idx = 0;
+
 // get todays data		 
          i4things_load_script("http://server.i4things.com:5408/iot_get/" + i4things_get_data_request(thing_id, thing_network_key) , function() {
 		 /**********************************************************\
@@ -100,6 +151,14 @@ var message_to_node = [1,2,3, Math.floor((Math.random() * 255))];
          \**********************************************************/
 			iot_json_function(iot_json, thing_private_key);
 		 });
+		
+// get hostory data for yesterday - index 0
+         i4things_load_script("http://server.i4things.com:5408/iot_get_hist/" + i4things_get_data_hist_request(thing_id, yesterday_idx, thing_network_key) , function() {
+		 /**********************************************************\
+					The Server will return : var iot_json = '{....}';
+         \**********************************************************/
+			iot_json_hist_function(iot_json, thing_private_key);
+		 });		 
 		
 		
 // send data to device		 
