@@ -227,6 +227,14 @@ function i4things_set_data_request(id, data, network_key, private_key) {
 
 }
 
+// id integer, hist day index integer, network_key in HEX format 32 chars
+function i4things_get_data_hist_request(id, day_idx, network_key) {
+    // gen challenge
+    var c = i4_things_challenge(network_key);
+
+    return id.toString() + '-' + day_idx.toString() + '-' + i5things_to_hex(c).toUpperCase() + '-' + i4things_long_random(20);
+}
+
 /**********************************************************\
 				  Dynamic load script functions
 \**********************************************************/
