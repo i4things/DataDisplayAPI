@@ -1,6 +1,6 @@
 # Display/Consume API
 
-Following is a actual example how to request data for the day and send data to a node - including  decrypt , iterate and display data in a HTML page with simple javascript.
+Following is an actual example how to request data for the day and send data to a node - including  decrypt , iterate and display data in a HTML page with simple javascript.
  
 IMPORTANT
  
