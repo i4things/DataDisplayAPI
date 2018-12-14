@@ -32,7 +32,7 @@ Data for history (from yesterday to up-to-60 days) is returned in the following 
 ```
 var iot_json= '{
     "thing": 4,
-    "hist": 0,
+    "hist": 0, // day index in the histiry - 0 yesterday
     "day": [{
         "t": 1544745580058,
         "l": 52.56,
