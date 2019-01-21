@@ -40,8 +40,8 @@ function i4things_xxtea_toUint32Array(bs) {
 
 function i4things_xxtea_toUint32ArraySize(bs) {
     bs.unshift(bs.length);
-    for (;
-        ((bs.length & 3) != 0);) {
+    for (var i = 0;
+        ((bs.length < 8) || ((bs.length & 3) != 0)); i++) {
         bs.push(Math.floor((Math.random() * 255)));
     }
 
