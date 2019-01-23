@@ -144,6 +144,14 @@ var thing_private_key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 var message_to_node = [1,2,3, Math.floor((Math.random() * 255))];
 var yesterday_idx = 0;
 
+// get last data (only one element from the top )		 
+         i4things_load_script("http://server.i4things.com:5408/iot_get_last/" + i4things_get_data_request(thing_id, thing_network_key) , function() {
+		 /**********************************************************\
+					The Server will return : var iot_json = '{....}';
+         \**********************************************************/
+			iot_json_function(iot_json, thing_private_key);
+		 });	
+
 // get todays data		 
          i4things_load_script("http://server.i4things.com:5408/iot_get/" + i4things_get_data_request(thing_id, thing_network_key) , function() {
 		 /**********************************************************\
