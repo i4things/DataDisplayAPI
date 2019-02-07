@@ -1,4 +1,5 @@
 
+
 /**********************************************************\
 |                                                          |
 | xxtea.js                                                 |
@@ -273,7 +274,7 @@ function i4things_get_ots(buf, pos) {
         case 0:
             {
                 var new_pos = pos + 1;
-                var new_value = (buf[start] >> 2) & 0x3F;
+                var new_value = Math.trunc(buf[start] / 4);
                 return {
                     pos: new_pos,
                     value: new_value
@@ -282,7 +283,7 @@ function i4things_get_ots(buf, pos) {
         case 1:
             {
                 var new_pos = pos + 2;
-                var new_value = ((((buf[start + 1] << 8) | (buf[start])) >> 2) & 0x3FFF);
+                var new_value = Math.trunc(((buf[start + 1] * 256) + buf[start]) / 4);
                 return {
                     pos: new_pos,
                     value: new_value
@@ -291,7 +292,7 @@ function i4things_get_ots(buf, pos) {
         case 2:
             {
                 var new_pos = pos + 4;
-                var new_value = ((buf[start + 3] << 24) | (buf[start + 2] << 16) | (buf[start + 1] << 8) | (buf[start] >> 2) & 0x3FFFFFFF);
+                var new_value = Math.trunc(((buf[start + 3] * 16777216) + (buf[start + 2] * 65536) + (buf[start + 1] * 256) + buf[start]) / 4);
                 return {
                     pos: new_pos,
                     value: new_value
@@ -300,8 +301,8 @@ function i4things_get_ots(buf, pos) {
         case 3:
             {
                 var new_pos = pos + 8;
-                var new_value = (((buf[start + 7] << 24) | (buf[start + 6] << 16) | (buf_[start + 5] << 8) | (buf[start + 4] >> 2) & 0x3FFFFFFF) * 0xFFFFFFFF) +
-                    ((buf[start + 3] << 24) | (buf[start + 2] << 16) | (buf_[start + 1] << 8) | (buf[start] >> 2));
+                var new_value =Math.trunc( ((((buf[start + 7]  * 16777216) + (buf[start + 6] * 65536) + (buf[start + 5]  * 256) + buf[start + 4]) * 4294967296) + // 2 ^ 32
+                    ((buf[start + 3]  * 16777216) + (buf[start + 2] * 65536) + (buf[start + 1]  * 256) + buf[start])) / 4);
                 return {
                     pos: new_pos,
                     value: new_value
@@ -311,19 +312,22 @@ function i4things_get_ots(buf, pos) {
 }
 
 function i4things_put_ots(v, buf) {
-    v = (v * 4);
     if (v < 0x40) {
+		v = (v << 2);
         buf.push(v & 0xFF);
     } else if (v < 0x4000) {
+	    v = (v << 2);
         v = v | 1;
         buf.push(v & 0xFF, (v >> 8) & 0xFF);
     } else if (v < 0x40000000) {
+	    v = (v << 2);
         v = v | 2;
         buf.push(v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF);
     } else if (v < 0x4000000000000000) {
+	    v = (v * 4);
         v = v + 3;
         buf.push(v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF);
-        v = v / 0xFFFFFFFF;
+        v = v / 4294967296; // 2 ^ 32
         buf.push(v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF);
     }
 }
@@ -353,21 +357,21 @@ function i4things_add_discrete(buf, min, max, value, container_size) {
             {
                 dev = (max - min) / 65535.0;
                 var dis = Math.round((value - min) / dev);
-                buf.push(dis & 0xFF, dis >> 8 & 0xFF);
+                buf.push(dis & 0xFF, (dis >> 8) & 0xFF);
             };
             break;
         case 3:
             {
                 dev = (max - min) / 16777215.0;
                 var dis = Math.round((value - min) / dev);
-                buf.push(dis & 0xFF, dis >> 8 & 0xFF, dis >> 16 & 0xFF);
+                buf.push(dis & 0xFF, (dis >> 8) & 0xFF, (dis >> 16) & 0xFF);
             };
             break;
         case 4:
             {
                 dev = (max - min) / 4294967295.0;
                 var dis = Math.round((value - min) / dev);
-                buf.push(dis & 0xFF, dis >> 8 & 0xFF, dis >> 16 & 0xFF, dis >> 24 & 0xFF);
+                buf.push(dis & 0xFF, (dis >> 8) & 0xFF, (dis >> 16) & 0xFF, (dis >> 24) & 0xFF);
             };
             break;
         default:
@@ -403,7 +407,7 @@ function i4things_get_discrete(buf, pos, min, max, container_size) {
             {
                 dev = (max - min) / 65535.0;
                 var new_pos = pos + 2;
-                var new_value = (min + ((buf[pos] + (buf[pos + 1] << 8)) * dev));
+                var new_value = (min + ((buf[pos] + (buf[pos + 1] * 256)) * dev));
                 return {
                     pos: new_pos,
                     value: new_value
@@ -414,7 +418,7 @@ function i4things_get_discrete(buf, pos, min, max, container_size) {
             {
                 dev = (max - min) / 16777215.0;
                 var new_pos = pos + 3;
-                var new_value = (min + ((buf[pos] + (buf[pos + 1] << 8) + (buf[pos + 2] << 16)) * dev));
+                var new_value = (min + ((buf[pos] + (buf[pos + 1] * 256) + (buf[pos + 2] * 65536)) * dev));
                 return {
                     pos: new_pos,
                     value: new_value
@@ -425,7 +429,7 @@ function i4things_get_discrete(buf, pos, min, max, container_size) {
             {
                 dev = (max - min) / 4294967295.0;
                 var new_pos = pos + 3;
-                var new_value = (min + ((buf[pos] + (buf[pos + 1] << 8) + (buf[pos + 2] << 16) + (buf[pos + 3] << 24)) * dev));
+                var new_value = (min + ((buf[pos] + (buf[pos + 1] * 256) + (buf[pos + 2] * 65536) + (buf[pos + 3]  * 16777216)) * dev));
                     return {
                         pos: new_pos,
                         value: new_value
@@ -460,3 +464,5 @@ function i4things_get_discrete(buf, pos, min, max, container_size) {
     function i4things_get_uint(buf, pos) {
         return i4things_get_ots(buf, pos);
     }
+
+
