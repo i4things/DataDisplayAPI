@@ -295,8 +295,7 @@ namespace i4things
 
         private static int resultStart = 16;
         private static int resultEnd = 2;
-        //private static String server = "http://server.i4things.com:5408/";
-        private static String server = "http://127.0.0.1:5408/";
+        private static String server = "http://server.i4things.com:5408/";
 #endregion
         /**********************************************************\
                       PUBLIC
