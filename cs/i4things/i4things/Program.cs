@@ -34,6 +34,9 @@ namespace i4things
             r = i4things.GetLast(14, "B273A8E19FB72FC2981366CF54D5A0CB");
             Console.WriteLine(r);
             Console.WriteLine("---------------");
+            r = i4things.GetFrom(14, 1548239349728, "B273A8E19FB72FC2981366CF54D5A0CB");
+            Console.WriteLine(r);
+            Console.WriteLine("---------------");
             r = i4things.SetData(14,new Byte[] {10,20,30},  "B273A8E19FB72FC2981366CF54D5A0CB", new Byte[] {0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5});
             Console.WriteLine((r == null) ? "OK" : r );
             Console.WriteLine("---------------");

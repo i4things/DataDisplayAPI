@@ -293,6 +293,16 @@ namespace i4things
             return sb.ToString();
         }
 
+        // id integer, from timestamp long, network_key in HEX format 32 chars
+        private static String GetDataFromRequest(UInt64 id, UInt64 timestamp, String networkKey)
+        {
+            // gen challenge
+            Byte[] c = Challenge(networkKey);
+            StringBuilder sb = new StringBuilder();
+            sb.Append(id.ToString()).Append('-').Append(timestamp.ToString()).Append('-').Append(ToHEX(c).ToUpper());
+            return sb.ToString();
+        }
+
         private static int resultStart = 16;
         private static int resultEnd = 2;
         private static String server = "http://server.i4things.com:5408/";
@@ -371,6 +381,31 @@ namespace i4things
         {
             StringBuilder uri = new StringBuilder(server);
             uri.Append("iot_get_hist/").Append(GetDataHistRequest((UInt64)id, (Byte)day, networkKey));
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri.ToString());
+            request.Timeout = 300000;
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                String r = reader.ReadToEnd().Trim();
+                return r.Substring(resultStart, r.Length - resultStart - resultEnd);
+            }
+        }
+
+        /// <summary>
+        /// Use to request/receive all data after a timestamp from the current day from the server
+        /// </summary>
+        /// <param name="id">Node Id</param>
+        /// <param name="from">timetsamp in millis after 1,1,1970 in UTC</param>
+        /// <param name="networkKey">Network key (HEX format 32 chars)</param>
+        /// <returns></returns>
+        public static String GetFrom(long id, long from, String networkKey)
+        {
+            StringBuilder uri = new StringBuilder(server);
+            uri.Append("iot_get_from/").Append(GetDataFromRequest((UInt64)id, (UInt64)from, networkKey));
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri.ToString());
             request.Timeout = 300000;
