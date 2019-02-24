@@ -128,7 +128,7 @@ namespace i4thingsStreaming
         \**********************************************************/
 
         private const String serviceName = "I4THINGS";
-        private const String uriBaseString = "tcp://server.i4things.com:5407?machineId=";
+        private const String uriBaseString = "tcp://streaming.i4things.com:5407?machineId=";
         private const String dataRecordName = "Data";
         private readonly FeedAdapterFactory factory;
         private readonly SubscriptionFeedAdapter subAdapter;
