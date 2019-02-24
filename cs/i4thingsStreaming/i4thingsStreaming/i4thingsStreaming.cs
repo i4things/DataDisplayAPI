@@ -53,6 +53,9 @@ namespace i4thingsStreaming
             {
                 return data;
             }
+
+
+
             return ToByteArraySize(Decrypt(ToUInt32Array(data), ToUInt32Array(key)));
         }
 
@@ -129,6 +132,10 @@ namespace i4thingsStreaming
 
         private const String serviceName = "I4THINGS";
         private const String uriBaseString = "tcp://streaming.i4things.com:5407?machineId=";
+        private const String timeRecordName = "Timestamp";
+        private const String latRecordName = "Latitude";
+        private const String lonRecordName = "Longitude";
+        private const String rssiRecordName = "Rssi";
         private const String dataRecordName = "Data";
         private readonly FeedAdapterFactory factory;
         private readonly SubscriptionFeedAdapter subAdapter;
@@ -142,6 +149,11 @@ namespace i4thingsStreaming
         
         private Boolean closed = false;
 
+
+        private Record timeRecord = null;
+        private Record latRecord = null;
+        private Record lonRecord = null;
+        private Record rssiRecord = null;
         private Record dataRecord = null;
 
         private static int resultStart = 16;
@@ -164,15 +176,46 @@ namespace i4thingsStreaming
         {
             if (dataRecord == null)
             {
+                timeRecord = message.Database.GetRecord(timeRecordName);
+                latRecord = message.Database.GetRecord(latRecordName);
+                lonRecord = message.Database.GetRecord(lonRecordName);
+                rssiRecord = message.Database.GetRecord(rssiRecordName);
                 dataRecord = message.Database.GetRecord(dataRecordName);
             }
 
-            String r = message[dataRecord].Value.String.Trim();
-            r = r.Substring(resultStart, r.Length - resultStart - resultEnd);
-            
-            long nodeId = Convert.ToInt64(security.Name);
+            long thing = Convert.ToInt64(security.Name);
+            long time = 0;
+            Double lat = 0;
+            Double lon = 0;
+            Byte rssi = 0;
+            Byte[] data = new Byte[0];
 
-            callback(nodeId, r);
+            for (int i = 0; i < message.RecordCount; i++)
+            {
+                RecordValue r = message[i];
+                if (r.Record.Index == timeRecord.Index)
+                {
+                    time = r.Value.NativeDateTime;
+                }
+                else if (r.Record.Index == latRecord.Index)
+                {
+                    lat = r.Value.Double;
+                }
+                else if (r.Record.Index == lonRecord.Index)
+                {
+                    lon = r.Value.Double;
+                }
+                else if (r.Record.Index == rssiRecord.Index)
+                {
+                    rssi = (Byte)r.Value.I8;
+                }
+                else if (r.Record.Index == dataRecord.Index)
+                {
+                    data = r.Value.ArrayDelta.Value.ArrI8AsU8;
+                }
+            }
+
+            callback(new i4thingsData(thing, time, lat, lon, rssi, data));
         }
 
         public void NewStatus(Security security, Status oldStatus, Status newStatus)
@@ -228,8 +271,8 @@ namespace i4thingsStreaming
         /// Delegate to receive message callbacks
         /// </summary>
         /// <param name="nodeId">Node Id</param>
-        /// <param name="data"> actual data in JSON format</param>
-        public delegate void NewMessage(long nodeId, String data);
+        /// <param name="data"> actual data ( if JSON format is required - just call data.ToString() )</param>
+        public delegate void NewMessage(i4thingsData data);
         
         /// <summary>
         /// Construct a streaming class and start receiving messages

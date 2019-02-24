@@ -28,9 +28,35 @@ namespace i4thingsStreaming
 {
     class Program
     {
-        public static void NewMessage(long nodeId, String data)
+        private static readonly long Epoch = new DateTime(1970, 1, 1).Ticks;
+
+        public static void NewMessage(i4thingsData data)
         {
-            Console.WriteLine(nodeId + " " + data);
+            Console.WriteLine("Thing :" + data.Thing);
+            Console.WriteLine("Time :" + data.Timestamp);
+            DateTime localTime =  new DateTime(Epoch + data.Timestamp * TimeSpan.TicksPerMillisecond, DateTimeKind.Utc).ToLocalTime();
+            Console.WriteLine("Local Time :" + localTime);
+            Console.WriteLine("Lat :" + data.Latitude);
+            Console.WriteLine("Lon :" + data.Longitude);
+            Console.WriteLine("Rssi(%) :" + data.RSSI);
+            Console.WriteLine("Data:");
+            foreach (Byte b in data.Data)
+            {
+                Console.Write(b + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Decrypted Data:");
+            Byte[] decrypterData = i4thingsStreaming.Decrypt(data.Data, new Byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 });
+            foreach (Byte b in decrypterData)
+            {
+                Console.Write(b + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("JSON : " + data.ToString());
+
+            
         }
 
         static void Main(string[] args)
