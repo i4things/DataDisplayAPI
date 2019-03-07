@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Collections;
 
 namespace i4things
 {
@@ -44,6 +45,8 @@ namespace i4things
         | Part modified by i4things                                | 
         |                                                          |
         \**********************************************************/
+
+        private static Random RND = new Random();
 
         private static Byte[] XXTEAEncrypt(Byte[] data, Byte[] key)
         {
@@ -67,11 +70,14 @@ namespace i4things
 
         private static UInt32[] ToUInt32ArraySize(Byte[] data)
         {
-            Byte[] dataSize = new Byte[data.Length + 1];
-            dataSize[0] = (Byte)data.Length;                                // set the prepended value
-            Array.Copy(data, 0, dataSize, 1, data.Length);
+            ArrayList buf = new ArrayList(data);
+            buf.Insert(0, (Byte)data.Length);
+            for (; ((buf.Count < 8) || ((buf.Count & 3) != 0));)
+            {
+                buf.Add((Byte)RND.Next(255));
+            } 
 
-            return ToUInt32Array(dataSize);
+            return ToUInt32Array((Byte[]) buf.ToArray( typeof( Byte ) ));
         }
 
         private static UInt32[] ToUInt32Array(Byte[] data)
