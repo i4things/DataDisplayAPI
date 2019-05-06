@@ -250,7 +250,7 @@ namespace i4things
 
         private static Byte[] Challenge(String networkKey)
         {
-            UInt64 t = (((UInt64)(new DateTime().ToUniversalTime().Ticks)) - epoch) / ((UInt64)TimeSpan.TicksPerMillisecond);
+            UInt64 t = (((UInt64)(DateTime.Now.ToUniversalTime().Ticks)) - epoch) / ((UInt64)TimeSpan.TicksPerMillisecond);
             Byte[] c = ToByteArray(t);
             // gen CRC
             UInt32 crc = CRC4(c);
