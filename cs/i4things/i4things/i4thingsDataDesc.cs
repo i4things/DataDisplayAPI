@@ -39,7 +39,7 @@ namespace i4things
         public Double Latitude { get { return l;} }
         public Double Longitude { get { return n; } }
         public Byte RSSI { get { return r; } }
-        public List<Byte> Data { get { return d; } }
+        public Byte[] Data { get { return d.ToArray(); } }
 
 
         public override string ToString() 
@@ -54,10 +54,10 @@ namespace i4things
             sb.Append("\"r\": ").Append(RSSI).Append(", ");
 
             sb.Append("\"d\": ").Append("[ ");
-            for (int i = 0; i < Data.Count; i++)
+            for (int i = 0; i < Data.Length; i++)
             {
                 sb.Append(Data[i]);
-                if (i < (Data.Count - 1))
+                if (i < (Data.Length - 1))
                 {
                     sb.Append(", ");
                 }
@@ -78,7 +78,7 @@ namespace i4things
         public List<i4thingsPayload> last;
 
         public long Thing { get { return thing; } }
-        public List<i4thingsPayload> Last { get { return last; } }
+        public i4thingsPayload[] Last { get { return last.ToArray(); } }
 
         public override string ToString()
         {
@@ -86,7 +86,7 @@ namespace i4things
             sb.Append("{");
             sb.Append("\"thing\": ").Append(Thing).Append(",");
             sb.Append("\"last\": [");
-            for (int i = 0; i < Last.Count; i++)
+            for (int i = 0; i < Last.Length; i++)
             {
                 sb.Append("{");
                 sb.Append("\"t\": ").Append(Last[i].Timestamp).Append(", ");
@@ -95,10 +95,10 @@ namespace i4things
                 sb.Append("\"r\": ").Append(Last[i].RSSI).Append(", ");
 
                 sb.Append("\"d\": ").Append("[ ");
-                for (int j = 0; j < Last[i].Data.Count; j++)
+                for (int j = 0; j < Last[i].Data.Length; j++)
                 {
                     sb.Append(Last[i].Data[j]);
-                    if (j < (Last[i].Data.Count - 1))
+                    if (j < (Last[i].Data.Length - 1))
                     {
                         sb.Append(", ");
                     }
@@ -106,7 +106,7 @@ namespace i4things
                 
                 sb.Append("] }");
 
-                if (i < (Last.Count - 1))
+                if (i < (Last.Length - 1))
                 {
                     sb.Append(", ");
                 }
@@ -126,7 +126,7 @@ namespace i4things
 
         public long Thing { get { return thing; } }
         public int Hist { get { return hist; } }
-        public List<i4thingsPayload> Day { get { return day; } }
+        public i4thingsPayload[] Day { get { return day.ToArray(); } }
 
         public override string ToString()
         {
@@ -135,7 +135,7 @@ namespace i4things
             sb.Append("\"thing\": ").Append(Thing).Append(",");
             sb.Append("\"hist\": ").Append(Hist).Append(",");
             sb.Append("\"day\": [");
-            for (int i = 0; i < Day.Count; i++)
+            for (int i = 0; i < Day.Length; i++)
             {
                 sb.Append("{");
                 sb.Append("\"t\": ").Append(Day[i].Timestamp).Append(", ");
@@ -144,10 +144,10 @@ namespace i4things
                 sb.Append("\"r\": ").Append(Day[i].RSSI).Append(", ");
 
                 sb.Append("\"d\": ").Append("[ ");
-                for (int j = 0; j < Day[i].Data.Count; j++)
+                for (int j = 0; j < Day[i].Data.Length; j++)
                 {
                     sb.Append(Day[i].Data[j]);
-                    if (j < (Day[i].Data.Count - 1))
+                    if (j < (Day[i].Data.Length - 1))
                     {
                         sb.Append(", ");
                     }
@@ -155,7 +155,7 @@ namespace i4things
 
                 sb.Append("] }");
 
-                if (i < (Day.Count - 1))
+                if (i < (Day.Length - 1))
                 {
                     sb.Append(", ");
                 }
