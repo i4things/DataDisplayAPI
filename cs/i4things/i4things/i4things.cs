@@ -405,7 +405,7 @@ namespace i4things
         /// Use to request/receive all data after a timestamp from the current day from the server
         /// </summary>
         /// <param name="id">Node Id</param>
-        /// <param name="from">timetsamp in millis after 1,1,1970 in UTC</param>
+        /// <param name="from">timestamp in millis after 1,1,1970 in UTC</param>
         /// <param name="networkKey">Network key (HEX format 32 chars)</param>
         /// <returns></returns>
         public static String GetFrom(long id, long from, String networkKey)
