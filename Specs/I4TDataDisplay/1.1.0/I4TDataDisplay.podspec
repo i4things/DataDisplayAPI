@@ -90,7 +90,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.swift_versions = "5.0"
-  spec.source_files  = "I4TDataDisplay/**/*.{swift}"
+  spec.source_files  = "swift/I4TDataDisplay/I4TDataDisplay/**/*.{swift}"
   # spec.exclude_files = "Classes/Exclude"
 
   # spec.public_header_files = "Classes/**/*.h"

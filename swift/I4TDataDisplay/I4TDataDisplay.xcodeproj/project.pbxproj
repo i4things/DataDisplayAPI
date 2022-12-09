@@ -20,7 +20,6 @@
 		2017B18724CDDDEF0082A28F /* I4TUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = I4TUtils.swift; sourceTree = "<group>"; };
 		2017B18824CDDDEF0082A28F /* DataDisplay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataDisplay.swift; sourceTree = "<group>"; };
 		2017B18924CDDDEF0082A28F /* XXTEA.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XXTEA.swift; sourceTree = "<group>"; };
-		2017B18D24CDDE040082A28F /* I4TDataDisplay.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = I4TDataDisplay.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +36,6 @@
 		2017B17224CDDD410082A28F = {
 			isa = PBXGroup;
 			children = (
-				2017B18D24CDDE040082A28F /* I4TDataDisplay.podspec */,
 				2017B17E24CDDD410082A28F /* I4TDataDisplay */,
 				2017B17D24CDDD410082A28F /* Products */,
 			);

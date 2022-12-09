@@ -18,6 +18,11 @@ public class DataDisplay {
   
   let server: URL
   
+  /// If not set, the shared URLSession is used
+  public var urlSession: URLSession?
+  
+  public var enableLogging: Bool = false
+  
   public init(server: URL) {
     self.server = server
   }
@@ -64,8 +69,7 @@ public class DataDisplay {
     return encr
   }
 
-  // private typealias PathMaker = () -> String
-  
+ 
   // id integer. network_key in HEX format 32 chars
   private static func dataRequestPath(id: UInt64, networkKey: Data) -> String {
     let ch = challenge(networkKey: networkKey)
@@ -90,7 +94,9 @@ public class DataDisplay {
   }
   
   private func logDebug(_ str: @autoclosure () -> String) {
-    print("I4THINGS [Debug]: " + str())
+    if enableLogging {
+      print("I4THINGS [Debug]: " + str())
+    }
   }
   
   private func processResponse(data: Data?,
@@ -135,6 +141,12 @@ public class DataDisplay {
     completion(.success(String(json)))
   }
   
+  private var effectiveSession: URLSession {
+    get {
+      self.urlSession ?? URLSession.shared
+    }
+  }
+  
   /// Use to request/receive all data for the current day from the server
   ///
   /// - Parameters:
@@ -161,7 +173,7 @@ public class DataDisplay {
   
     logDebug("URL: \(url.absoluteString)")
     
-    URLSession.shared.dataTask(with: url) {
+    effectiveSession.dataTask(with: url) {
       data, response, error in
       self.processResponse(data: data, response: response, error: error, completion: completion)
     }.resume()
@@ -192,7 +204,7 @@ public class DataDisplay {
     
     logDebug("URL: \(url.absoluteString)")
     
-    URLSession.shared.dataTask(with: url) {
+    effectiveSession.dataTask(with: url) {
       data, response, error in
       self.processResponse(data: data, response: response, error: error, completion: completion)
       }.resume()
@@ -222,7 +234,7 @@ public class DataDisplay {
     
     logDebug("URL: \(url.absoluteString)")
     
-    URLSession.shared.dataTask(with: url) {
+    effectiveSession.dataTask(with: url) {
       data, response, error in
       self.processResponse(data: data, response: response, error: error, completion: completion)
       }.resume()
